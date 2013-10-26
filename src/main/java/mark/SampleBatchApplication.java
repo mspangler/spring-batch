@@ -1,19 +1,15 @@
 package mark;
 
-import java.sql.Date;
-
 import javax.sql.DataSource;
 
 import org.apache.commons.dbcp.BasicDataSource;
 import org.springframework.batch.core.Job;
-import org.springframework.batch.core.JobParameters;
-import org.springframework.batch.core.JobParametersBuilder;
-import org.springframework.batch.core.JobParametersIncrementer;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
@@ -45,27 +41,9 @@ public class SampleBatchApplication {
 	@Bean
 	public Job job() throws Exception {
 		return this.jobs.get("job")
-				.incrementer(new JobParametersIncrementer() {
-
-					@Override
-					public JobParameters getNext(JobParameters parameters) {
-						System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-						long id=0;
-				        if (parameters==null || parameters.isEmpty()) {
-				            id=1;
-				        }else{
-				            id = parameters.getLong("run.id",1L) + 1;
-				        }
-				        JobParametersBuilder builder = new JobParametersBuilder();
-				 
-				        builder.addLong("run.id", id).toJobParameters();
-				        builder.addLong("EXECUTION_DATE", new Date(System.currentTimeMillis()).getTime());
-				 
-				        return builder.toJobParameters();
-					}
-					
-				})
-				.start(step1())
+				.incrementer(new RunIdIncrementer())
+				.flow(this.step1())
+				.end()
 				.build();
 	}
 

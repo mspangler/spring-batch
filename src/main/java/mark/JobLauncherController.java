@@ -20,7 +20,7 @@ public class JobLauncherController {
     @RequestMapping("/jobLauncher.html")
     @ResponseBody
     public String handle() throws Exception{
-        jobLauncher.run(job, new JobParametersBuilder().addString("date", System.currentTimeMillis() + "").toJobParameters());
+        jobLauncher.run(job, new JobParametersBuilder().addLong("date", System.currentTimeMillis()).toJobParameters());
         return "Started the batch...";
     }
 
