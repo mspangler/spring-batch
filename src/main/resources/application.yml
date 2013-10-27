@@ -1,0 +1,6 @@
+server:
+  port: 9002
+management:
+  port: 9003
+logging:
+  file: target/log.out
