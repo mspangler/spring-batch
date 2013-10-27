@@ -1,5 +1,7 @@
 package mark;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.launch.JobLauncher;
@@ -11,6 +13,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class JobLauncherController {
 	
+	Logger logger = LoggerFactory.getLogger(JobLauncherController.class);
+	
 	@Autowired
     JobLauncher jobLauncher;
 
@@ -20,6 +24,7 @@ public class JobLauncherController {
     @RequestMapping("/jobLauncher.html")
     @ResponseBody
     public String handle() throws Exception{
+    	logger.info("Starting batch...");
         jobLauncher.run(job, new JobParametersBuilder().addLong("date", System.currentTimeMillis()).toJobParameters());
         return "Started the batch...";
     }
